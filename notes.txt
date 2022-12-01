@@ -1,0 +1,18 @@
+export PATH="$PATH:/usr/lib/postgresql/12/bin"
+^ need to do this :)
+
+
+source ./startPostgreSQL.sh
+source ./createPostgreDB.sh
+source ./sql/scripts/create_db.sh
+
+
+source ./java/scripts/compile.sh
+
+
+source ./stopPostgreDB.sh
+
+manager: Paige
+Password: xyz
+
+Update: store 3 7up
