@@ -1,2 +1,2 @@
-run source [full path here]/compile.sh --gui
+run ```source [full path here]/compile.sh --gui```
 
