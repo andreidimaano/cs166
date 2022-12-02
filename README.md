@@ -1,2 +1,2 @@
-# I think you are adorable IN REAL LIFE
+run ```source [full path here]/compile.sh --gui```
 
