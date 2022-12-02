@@ -12,5 +12,5 @@ javac -d java/classes java/src/Retail.java
 
 #run the java program
 #Use your database name, port number and login
-java -cp $DIR/../classes:$DIR/../lib/pg73jdbc3.jar Retail $USER"_DB" $PGPORT $USER --gui
+java -cp $DIR/../classes:$DIR/../lib/pg73jdbc3.jar Retail $USER"_DB" $PGPORT $USER $1
 
