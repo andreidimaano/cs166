@@ -1057,6 +1057,7 @@ public class Retail {
    }//end
 
 // Rest of the functions definition go in here
+
    public static void viewStores(Retail esql) { // Andrei
       try{
          String query = String.format("SELECT s.storeID, s.name, calculate_distance(u.latitude, u.longitude, s.latitude, s.longitude) as dist FROM Users u, Store s WHERE u.userID = %d AND calculate_distance(u.latitude, u.longitude, s.latitude, s.longitude) <= 30 ORDER BY dist", esql.getUserId());
