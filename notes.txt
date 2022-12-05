@@ -1,5 +1,5 @@
 export PATH="$PATH:/usr/lib/postgresql/12/bin"
-^ need to do this :)
+^ need to do this if on local
 
 
 source ./startPostgreSQL.sh

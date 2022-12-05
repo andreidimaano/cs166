@@ -1057,7 +1057,6 @@ public class Retail {
    }//end
 
 // Rest of the functions definition go in here
-
    public static void viewStores(Retail esql) { // Andrei
       try{
          String query = String.format("SELECT s.storeID, s.name, calculate_distance(u.latitude, u.longitude, s.latitude, s.longitude) as dist FROM Users u, Store s WHERE u.userID = %d AND calculate_distance(u.latitude, u.longitude, s.latitude, s.longitude) <= 30 ORDER BY dist", esql.getUserId());
@@ -1076,10 +1075,6 @@ public class Retail {
          String query3 = String.format("SELECT s.storeID, s.name FROM Users u, (SELECT * FROM Store S WHERE S.storeID IN (SELECT O.storeID FROM Orders O WHERE O.customerID = %d)) as s WHERE u.userID = %d AND calculate_distance(u.latitude, u.longitude, s.latitude, s.longitude) <= 30", esql.getUserId(), esql.getUserId());
          int rowCount3 = esql.executeQueryAndPrintResult(query3);
          System.out.println ("total stores: " + rowCount3);
-
-         /* TODO
-          1. Recently Shopped at Stores
-         */
       } catch(Exception e){
          System.err.println (e.getMessage());
       }
@@ -1236,6 +1231,10 @@ public class Retail {
    }
    public static void placeOrder(Retail esql, String storeID, String productName, Integer unitsOrdered) { // Christopher
       try{
+         if (unitsOrdered < 0 ) {
+            throw new IOException("Can't order negative amounts");
+         }
+
          // check that the store is within 30 miles of the user
          String query = String.format("SELECT latitude, longitude FROM Store WHERE storeID = %s", storeID);
          List<List<String>> stores = esql.executeQueryAndReturnResult(query);
@@ -1321,7 +1320,7 @@ public class Retail {
          // make sure the manager manages this store
          String query = String.format("SELECT S.managerID FROM Store S WHERE S.storeID = %s AND S.managerID = %d", storeID, esql.getUserId());
          List<List<String>> result = esql.executeQueryAndReturnResult(query);
-         if (result.size() == 0) {
+         if (result.size() == 0 && esql.getUserType().equals("manager")) {
             throw new IOException(String.format("You do not manage the store with ID: %s", storeID));
          }
 
@@ -1455,7 +1454,7 @@ public class Retail {
    }	
    public static void viewUsers(Retail esql) {	
       try{	
-         String query = "SELECT * FROM Users U";	
+         String query = "SELECT * FROM Users U ORDER BY U.userID";	
          System.out.println ("User Information: ");	
          int rowCount = esql.executeQueryAndPrintResult(query);	
          System.out.println ("total users: " + rowCount);	
@@ -1509,12 +1508,13 @@ public class Retail {
          System.out.print("\tInput new type: ");	
          String type = in.readLine();	
          query = String.format (	
-            "UPDATE User SET name = %s, password = %s, latitude = %s, longitude = %s, type = %s WHERE userID = %s",	
+            "UPDATE Users SET name = '%s', password = '%s', latitude = %s, longitude = %s, type = '%s' WHERE userID = %s",	
             name,	
             password,	
             latitude,	
             longitude,	
-            type	
+            type,
+            userID
          );	
          esql.executeUpdate(query);	
          System.out.println("User information succesfully updated");	
@@ -1540,6 +1540,10 @@ public class Retail {
    }
    public static void placeProductSupplyRequests(Retail esql, String storeID, String productName, String numProductsNeeded, String warehouseID) { // Christopher
       try {
+         if (Integer.parseInt(numProductsNeeded) < 0 ) {
+            throw new IOException("Can't order negative amounts");
+         }
+
          if (!(esql.getUserType().equals("manager") || esql.getUserType().equals("admin"))) {
             throw new IOException("You do not have permission to perform this action");
          }
@@ -1547,7 +1551,7 @@ public class Retail {
          // make sure the manager manages this store
          String query = String.format("SELECT S.managerID FROM Store S WHERE S.storeID = %s AND S.managerID = %s", storeID, esql.getUserId());
          List<List<String>> result = esql.executeQueryAndReturnResult(query);
-         if (result.size() == 0) {
+         if (result.size() == 0 && esql.getUserType().equals("manager")) {
             throw new IOException(String.format("You do not manage the store with ID: %s", storeID));
          }
          
